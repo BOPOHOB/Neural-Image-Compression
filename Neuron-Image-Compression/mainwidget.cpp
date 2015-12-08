@@ -42,7 +42,7 @@ MainWidget::MainWidget(QWidget *parent)
     this->setLayout(new QVBoxLayout);
 
     input->setOpenFileFunction([](FileNameEdit*)->QString{
-        return QFileDialog::getOpenFileName(0, tr("Chose file"), "", "img(*.png, *.gif, *.jpg)");
+        return QFileDialog::getOpenFileName(0, tr("Chose file"), "", "*.png *.gif *.jpg");
     });
 
     this->layout()->addWidget(input);

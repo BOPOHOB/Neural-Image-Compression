@@ -8,8 +8,6 @@
 #include <QDataStream>
 #endif
 
-namespace CGL {
-
 CMatrix::CMatrix() : wid(0) { }
 CMatrix::CMatrix(const CMatrix& m) { this->operator =(m); }
 CMatrix::CMatrix(int w, int h)
@@ -70,8 +68,8 @@ CMatrix::T CMatrix::minInColumnExclude(int c, int exclude) const {
     if (height() <= 1)
         return 0;
     T min(std::numeric_limits<T>::infinity());
-    for (int i(0); i != m.size(); ++i) {
-        if (m[i][c] < min && exclude != i) {
+    for (size_t i(0); i != m.size(); ++i) {
+        if (m[i][c] < min && static_cast<size_t>(exclude) != i) {
             min = m[i][c];
         }
     }
@@ -148,7 +146,31 @@ void CMatrix::naNtoInf() {
     }
 }
 
-#ifdef QT_VERSION
+#ifndef NOT_QT_AVAILABLE
+namespace {
+
+QDataStream& operator<< (QDataStream& out, const std::vector<CMatrix::T>& m) {
+    out << static_cast<const quint32>(m.size());
+    const int writed(out.writeRawData(static_cast<const char*>(static_cast<const void*>(m.data())), m.size() * sizeof(CMatrix::T)));
+    if (writed == static_cast<int>(m.size() * sizeof(CMatrix::T))) {
+        out.setStatus(QDataStream::WriteFailed);
+    }
+    return out;
+}
+
+QDataStream& operator>> (QDataStream& in, std::vector<CMatrix::T>& m) {
+    quint32 size;
+    in >> size;
+    m.resize(size);
+    const int readed(in.readRawData(static_cast<char*>(static_cast<void*>(m.data())), m.size() * sizeof(CMatrix::T)));
+    if (readed != static_cast<int>(m.size() * sizeof(CMatrix::T))) {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+
+}
+
 QDebug operator<< (QDebug out, const CMatrix &obj) {
     QString matrix("CMatrix {\n");
     for (int i(0); i != obj.height(); ++i) {
@@ -175,7 +197,7 @@ QDataStream& operator>> (QDataStream& in, CMatrix& m) {
     }
     return in;
 }
-#endif
+#endif //NOT_QT_AVAILABLE
 
 double CMatrix::det(){
     if ( height() != width()){
@@ -230,7 +252,7 @@ CMatrix CMatrix::operator* (const CVector& vector) const {
 }
 
 CMatrix operator* (const CVector& vector, const CMatrix& matrix){
-    if (vector.size() != matrix.width()) {
+    if (static_cast<int>(vector.size()) != matrix.width()) {
         throw std::exception();
     }
     if (vector.getOrientation() != CVector::Vertical){
@@ -249,9 +271,6 @@ CMatrix CMatrix::invers() const {
     if (height() != width()){
         throw std::exception();
     }
-//    if ( this->det() <= 0.00001){
-//    qDebug() << "Warning! Matrix is badly condition! \ninvers() may be wrong";
-//    }
     CMatrix matrixE(height(),width());
     for (int i(0); i < height(); i++){
         for (int j(0); j < width(); j++)
@@ -326,6 +345,4 @@ CMatrix CMatrix::pseudoInvers() const{
     tempM = tempM.invers();
     result = tempM * result;
     return result;
-}
-
 }

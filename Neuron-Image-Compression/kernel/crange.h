@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#ifdef QT_VERSION
+#ifndef NOT_QT_AVAILABLE
 #include <QDataStream>
 #include <QTextStream>
 #include <QDebug>
@@ -24,6 +24,8 @@ public:
 
     T getMin() const { return this->first; }
     T getMax() const { return this->second; }
+    T min() const { return this->first; }
+    T max() const { return this->second; }
     void setMin(const T& v) { this->first = v; }
     void setMax(const T& v) { this->second = v; }
 
@@ -55,35 +57,6 @@ template <typename T> std::istream& operator >> (std::istream& in, CRange<T>& i)
     return in;
 }
 
-#ifdef QT_VERSION
-template <typename T> QTextStream& operator << (QTextStream& out, const CRange<T>& i) {
-    return out << "CRange{" << i.getMin() << ':' << i.getMax() << '}';
-}
-template <typename T> QTextStream& operator >> (QTextStream& in, CRange<T>& i) {
-    T buf;
-    in >> buf;
-    i.setMin(buf);
-    in >> buf;
-    i.setMax(buf);
-    return in;
-}
-template <typename T> QDataStream& operator << (QDataStream& out, const CRange<T>& i) {
-    return out << i.getMin() << i.getMax();
-}
-
-template <typename T> QDataStream& operator >> (QDataStream& in, CRange<T>& i) {
-    T buf;
-    in >> buf;
-    i.setMin(buf);
-    in >> buf;
-    i.setMax(buf);
-    return in;
-}
-template <typename T> QDebug operator << (QDebug out, const CRange<T>& i) {
-    return out << "CRange{" << i.getMin() << ':' << i.getMax() << '}';
-}
-#endif
-
 class CRealRange : public CRange<double>
 {
 public:
@@ -109,7 +82,42 @@ public:
         return *this;
     }
 };
-typedef CRange<int> CIndexRange;
+
+class CIndexRange : public CRange<int>
+{
+public:
+    CIndexRange() {}
+    CIndexRange(int min, int max) : CRange<int>(min, max) { }
+    CIndexRange(const CIndexRange& v) : CRange<int>(v.first, v.second) { }
+
+    CIndexRange(int center) : CRange<int>(center, center) { }
+};
+
+#ifndef NOT_QT_AVAILABLE
+//It's enough to write any class derived from range
+template <typename T> QDataStream& operator << (QDataStream& out, const CRange<T>& i) {
+    const int writed(out.writeRawData(static_cast<const char*>(static_cast<const void*>(&i)), sizeof(CRange<T>) / sizeof(char)));
+    Q_ASSERT(writed == sizeof(CRange<T>) / sizeof(char));
+    return out;
+}
+
+template <typename T> QDataStream& operator >> (QDataStream& in, CRange<T>& i) {
+    const int readed(in.readRawData(static_cast<char*>(static_cast<void*>(&i)), sizeof(CRange<T>) / sizeof(char)));
+    Q_ASSERT(readed == sizeof(CRange<T>) / sizeof(char));
+    return in;
+}
+
+template <typename T> QDebug operator << (QDebug out, const CRange<T>& i) {
+    return out << "CRange{" << i.getMin() << ':' << i.getMax() << '}';
+}
+template <typename T> QDebug operator << (QDebug out, const CRealRange& i) {
+    return out << "CRealRange{" << i.getMin() << ':' << i.getMax() << '}';
+}
+template <typename T> QDebug operator << (QDebug out, const CIndexRange& i) {
+    return out << "CIndexRange{" << i.getMin() << ':' << i.getMax() << '}';
+}
+#endif
+
 
 
 #endif // CRANGE_H

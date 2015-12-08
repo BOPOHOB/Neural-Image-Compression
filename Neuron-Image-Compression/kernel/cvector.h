@@ -4,7 +4,6 @@
 
 class CVector : public CArray
 {
-
 public:
 
     enum Orientation {

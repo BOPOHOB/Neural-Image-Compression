@@ -13,6 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Neuron-Image-Compression
 TEMPLATE = app
 CONFIG += c++11
+DEFINES += QT_AVAILABLE
 
 RC_ICONS += "img/logo.ico"
 
@@ -25,7 +26,11 @@ SOURCES += main.cpp\
     kernel/crange.cpp \
     pixmapwidget.cpp \
     kernel/csize.cpp \
-    framegriddisplay.cpp
+    framegriddisplay.cpp \
+    neuralspan.cpp \
+    neuralcompressor.cpp \
+    trainingset.cpp \
+    trainingsample.cpp
 
 HEADERS  += mainwidget.h \
     kernel/carray.h \
@@ -35,7 +40,11 @@ HEADERS  += mainwidget.h \
     kernel/crange.h \
     pixmapwidget.h \
     kernel/csize.h \
-    framegriddisplay.h
+    framegriddisplay.h \
+    neuralspan.h \
+    neuralcompressor.h \
+    trainingset.h \
+    trainingsample.h
 
 RESOURCES += \
     res.qrc

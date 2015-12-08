@@ -11,8 +11,6 @@ class QDataStream;
 #endif
 class CRealRange;
 
-namespace CGL {
-
 class CMatrix
 {
 public:
@@ -80,8 +78,6 @@ QDataStream& operator>> (QDataStream&, CMatrix&);
 
 QDebug operator<< (QDebug out, const CMatrix &obj);
 #endif
-
-}
 
 #endif // CMatrix_H
 
