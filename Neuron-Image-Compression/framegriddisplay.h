@@ -17,6 +17,8 @@ public:
     void setPixmap(const QPixmap& img, const QSize& gridSize);
     const QList<QImage>& getFrameList() const;
 
+    static QSize frameSize(const QSize& imgSize, const QSize& gridSize);
+
 private:
     QSize gridSize;
     QList<QImage> frameList;

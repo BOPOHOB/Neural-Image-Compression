@@ -29,6 +29,7 @@ private slots:
     void setScaleResizeMode();
     void update();
     void updateClipSize();
+    void updateFrameSize();
 
 private:
     QProgressBar* const progress;
@@ -39,6 +40,7 @@ private:
     QSpinBox* const clipHeightSpin;
     QSpinBox* const frameWidthSpin;
     QSpinBox* const frameHeightSpin;
+    QSpinBox* const lSpin;
     ResizeMode currentMode;
 
     QImage source;

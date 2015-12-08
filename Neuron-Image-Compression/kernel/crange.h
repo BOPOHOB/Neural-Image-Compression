@@ -43,17 +43,19 @@ public:
 
     T operator() (const double& op) const { return getMin() + range() * op; }
     double operator[] (const T& op) const { return (op - getMin()) / range(); }
+
+    template <typename D> friend QDataStream& operator >> (QDataStream& in, CRange<D>& i);
+    template <typename D> friend std::istream& operator >> (std::istream& in, CRange<D>& i);
+    template <typename D> friend QDataStream& operator << (QDataStream& in, CRange<D>& i);
+    template <typename D> friend std::istream& operator << (std::istream& in, CRange<D>& i);
 };
 
 template <typename T> std::ostream& operator << (std::ostream& out, const CRange<T>& i) {
     return out << i.getMin() << i.getMax();
 }
 template <typename T> std::istream& operator >> (std::istream& in, CRange<T>& i) {
-    T buf;
-    in >> buf;
-    i.setMin(buf);
-    in >> buf;
-    i.setMax(buf);
+    in >> i.first;
+    in >> i.second;
     return in;
 }
 
@@ -96,24 +98,24 @@ public:
 #ifndef NOT_QT_AVAILABLE
 //It's enough to write any class derived from range
 template <typename T> QDataStream& operator << (QDataStream& out, const CRange<T>& i) {
-    const int writed(out.writeRawData(static_cast<const char*>(static_cast<const void*>(&i)), sizeof(CRange<T>) / sizeof(char)));
-    Q_ASSERT(writed == sizeof(CRange<T>) / sizeof(char));
+    out << i.first << i.second;
     return out;
 }
 
 template <typename T> QDataStream& operator >> (QDataStream& in, CRange<T>& i) {
-    const int readed(in.readRawData(static_cast<char*>(static_cast<void*>(&i)), sizeof(CRange<T>) / sizeof(char)));
-    Q_ASSERT(readed == sizeof(CRange<T>) / sizeof(char));
+    in >> i.first >> i.second;
     return in;
 }
 
 template <typename T> QDebug operator << (QDebug out, const CRange<T>& i) {
     return out << "CRange{" << i.getMin() << ':' << i.getMax() << '}';
 }
-template <typename T> QDebug operator << (QDebug out, const CRealRange& i) {
+
+inline QDebug operator << (QDebug out, const CRealRange& i) {
     return out << "CRealRange{" << i.getMin() << ':' << i.getMax() << '}';
 }
-template <typename T> QDebug operator << (QDebug out, const CIndexRange& i) {
+
+inline QDebug operator << (QDebug out, const CIndexRange& i) {
     return out << "CIndexRange{" << i.getMin() << ':' << i.getMax() << '}';
 }
 #endif

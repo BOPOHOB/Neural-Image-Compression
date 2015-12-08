@@ -138,7 +138,7 @@ void CMatrix::excludeColumn(int c) {
     repoint();
 }
 
-void CMatrix::naNtoInf() {
+void CMatrix::nanToInf() {
     for (Data::iterator it(data.begin()); it != data.end(); ++it) {
         if (!(*it == *it)) {
             *it = std::numeric_limits<T>::infinity();
@@ -151,7 +151,8 @@ namespace {
 
 QDataStream& operator<< (QDataStream& out, const std::vector<CMatrix::T>& m) {
     out << static_cast<const quint32>(m.size());
-    const int writed(out.writeRawData(static_cast<const char*>(static_cast<const void*>(m.data())), m.size() * sizeof(CMatrix::T)));
+    const int writed(out.writeRawData(static_cast<const char*>(static_cast<const void*>(m.data())),
+                                      static_cast<int>(m.size() * sizeof(CMatrix::T))));
     if (writed == static_cast<int>(m.size() * sizeof(CMatrix::T))) {
         out.setStatus(QDataStream::WriteFailed);
     }
@@ -162,7 +163,8 @@ QDataStream& operator>> (QDataStream& in, std::vector<CMatrix::T>& m) {
     quint32 size;
     in >> size;
     m.resize(size);
-    const int readed(in.readRawData(static_cast<char*>(static_cast<void*>(m.data())), m.size() * sizeof(CMatrix::T)));
+    const int readed(in.readRawData(static_cast<char*>(static_cast<void*>(m.data())),
+                                    static_cast<int>(m.size() * sizeof(CMatrix::T))));
     if (readed != static_cast<int>(m.size() * sizeof(CMatrix::T))) {
         in.setStatus(QDataStream::ReadCorruptData);
     }

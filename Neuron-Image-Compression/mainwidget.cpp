@@ -17,6 +17,8 @@
 #include "pixmapwidget.h"
 #include "kernel/csize.h"
 #include "framegriddisplay.h"
+#include "neuralcompressor.h"
+#include "trainingset.h"
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
@@ -28,6 +30,7 @@ MainWidget::MainWidget(QWidget *parent)
     , clipHeightSpin(new QSpinBox(this))
     , frameWidthSpin(new QSpinBox(this))
     , frameHeightSpin(new QSpinBox(this))
+    , lSpin(new QSpinBox(this))
     , currentMode(Cut)
 {
 #ifdef Q_OS_WIN
@@ -64,6 +67,7 @@ MainWidget::MainWidget(QWidget *parent)
     clipHeightSpin->setMinimum(1);
     frameWidthSpin->setMinimum(1);
     frameHeightSpin->setMinimum(1);
+    lSpin->setValue(64);
     params->addRow(tr("Clip width"), clipWidthSpin);
     params->addRow(tr("Clip height"), clipHeightSpin);
     params->addRow(tr("Resize mode"), ([this]()->QWidget*{
@@ -80,12 +84,14 @@ MainWidget::MainWidget(QWidget *parent)
     })());
     params->addRow(tr("Frame grid columns count"), frameWidthSpin);
     params->addRow(tr("Frame grid rows count"), frameHeightSpin);
+    params->addRow(tr("L"), lSpin);
 
     this->connect(input, SIGNAL(fileNameChanged(QString)), SLOT(setFilename(QString)));
     this->connect(clipWidthSpin, SIGNAL(valueChanged(int)), SLOT(updateClipSize()));
     this->connect(clipHeightSpin, SIGNAL(valueChanged(int)), SLOT(updateClipSize()));
-    this->connect(frameWidthSpin, SIGNAL(valueChanged(int)), SLOT(update()));
-    this->connect(frameHeightSpin, SIGNAL(valueChanged(int)), SLOT(update()));
+    this->connect(frameWidthSpin, SIGNAL(valueChanged(int)), SLOT(updateFrameSize()));
+    this->connect(frameHeightSpin, SIGNAL(valueChanged(int)), SLOT(updateFrameSize()));
+    this->connect(lSpin, SIGNAL(valueChanged(int)), SLOT(update()));
 }
 
 void MainWidget::setCutResizeMode()
@@ -116,6 +122,15 @@ void MainWidget::setFilename(const QString& f)
     update();
 }
 
+void MainWidget::updateFrameSize()
+{
+    update();
+    if (!initial->getFrameList().empty()) {
+        const QSize s(initial->getFrameList().first().size());
+        lSpin->setMaximum(s.width() * s.height());
+    }
+}
+
 void MainWidget::updateClipSize()
 {
     frameWidthSpin->setMaximum(clipWidthSpin->value());
@@ -136,6 +151,8 @@ void MainWidget::update()
     }
     initial->setPixmap(pix, QSize(frameWidthSpin->value(), frameHeightSpin->value()));
     initial->update();
+
+    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList())).recoverToQPixmap());
 }
 
 MainWidget::~MainWidget()

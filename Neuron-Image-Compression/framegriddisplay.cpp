@@ -32,12 +32,17 @@ void FrameGridDisplay::paintEvent(QPaintEvent *)
     }
 }
 
+QSize FrameGridDisplay::frameSize(const QSize& img, const QSize& gridSize)
+{
+    return QSize(img.width() / gridSize.width(),
+                 img.height() / gridSize.height());
+}
+
 void FrameGridDisplay::setPixmap(const QPixmap& img, const QSize& gridSize)
 {
     frameList.clear();
     this->gridSize = gridSize;
-    const QSize frameSize(img.width() / gridSize.width(),
-                          img.height() / gridSize.height());
+    const QSize frameSize(FrameGridDisplay::frameSize(img.size(), gridSize));
     for (int i(0); i != gridSize.width(); ++i) {
         for (int j(0); j != gridSize.height(); ++j) {
             QImage p(frameSize, QImage::Format_RGB888);

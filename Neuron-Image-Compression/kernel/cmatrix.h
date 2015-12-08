@@ -56,11 +56,11 @@ public:
     CMatrix operator* (const CMatrix&) const;
     CMatrix operator* (const CVector& vector) const;
     T det();
-    void naNtoInf();
+    void nanToInf();
 
     int width() const { return wid; }
-    int height() const { return m.size(); }
-    int size() const { return data.size(); }
+    int height() const { return static_cast<int>(m.size()); }
+    int size() const { return static_cast<int>(data.size()); }
     bool empty() const { return data.empty(); }
 
 #ifdef QT_VERSION
