@@ -154,7 +154,8 @@ void MainWidget::update()
     initial->setPixmap(pix, QSize(frameWidthSpin->value(), frameHeightSpin->value()));
     initial->update();
 
-    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList()), lSpin->value()).recoverQPixmap());
+    const QSize frameSize(initial->getFrameList().front().size());
+    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList()), lSpin->value(), frameWidthSpin->value(), CSize(frameSize.width(), frameSize.height())).recoverQPixmap());
 }
 
 MainWidget::~MainWidget()

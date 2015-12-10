@@ -295,17 +295,19 @@ CVector CMatrix::operator* (const CVector& vector) const {
     return result;
 }
 
-CMatrix operator* (const CVector& vector, const CMatrix& matrix){
-    if (static_cast<int>(vector.size()) != matrix.width()) {
+CVector operator* (const CVector& vector, const CMatrix& matrix){
+    if (static_cast<int>(vector.size()) != matrix.height()) {
+        qDebug() << vector.size() << "!=" <<  matrix.height();
         throw std::exception();
     }
     if (vector.getOrientation() != CVector::Vertical){
+        qDebug() << vector << "is horisontal" <<  matrix.height();
         throw std::exception();
     }
-    CMatrix result(matrix.width(),1);
+    CVector result(matrix.width());
     for(int i(0); i < matrix.width(); i++){
         for(int j(0); j < matrix.height(); j++){
-            result[0][i] += matrix[j][i] * vector[j];
+            result[i] += matrix[j][i] * vector[j];
         }
     }
     return result;

@@ -17,6 +17,7 @@ public:
     Orientation getOrientation() const;
     void setOrientation(const Orientation);
     void transpose();
+    CVector transposed() const;
 
 private:
     Orientation orientation;

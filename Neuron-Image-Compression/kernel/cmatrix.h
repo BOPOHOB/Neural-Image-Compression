@@ -65,6 +65,9 @@ public:
     T* data() { return memory.data(); }
     const T* data() const { return memory.data(); }
 
+
+    friend CVector operator*(const CVector&, const CMatrix&);
+
 #ifdef QT_VERSION
     friend QDebug operator<< (QDebug out, const CMatrix &obj);
 
@@ -73,7 +76,7 @@ public:
 #endif
 };
 
-CMatrix operator* (const CVector&, const CMatrix&);
+CVector operator* (const CVector&, const CMatrix&);
 #ifdef QT_VERSION
 QDataStream& operator<< (QDataStream&, const CMatrix&);
 QDataStream& operator>> (QDataStream&, CMatrix&);

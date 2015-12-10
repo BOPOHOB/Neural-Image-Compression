@@ -12,11 +12,19 @@ double sqr(const double& v) { return v * v; }
 }
 
 
-NeuralCompressor::NeuralCompressor(const TrainingSet& s, const int l)
+NeuralCompressor::NeuralCompressor(const TrainingSet& s, const int l,  const int rowFramesCount, const CSize frameSize)
     : in(l, s.front().size())
     , out(s.front().size(), l)
+    , width(rowFramesCount)
+    , frame(frameSize)
 {
-    qDebug() << in << out;
+    //teaching...
+
+    data.resize(s.size());
+    TrainingSet::const_iterator sIt(s.begin());
+    for (CompressedData::iterator it(data.begin()); it != data.end(); ++it, ++sIt) {
+        *it = *sIt * in;
+    }
 }
 
 #ifdef QT_AVAILABLE

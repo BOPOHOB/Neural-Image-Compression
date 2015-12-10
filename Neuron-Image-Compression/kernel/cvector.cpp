@@ -5,7 +5,7 @@
 
 CVector::CVector(int size, Orientation theOrientation)
   : CArray(size)
-  , orientation(theOrientation){ }
+  , orientation(theOrientation) { }
 
 CVector::CVector(const CVector& enother)
     : CArray(enother)
@@ -22,8 +22,14 @@ CVector::Orientation CVector::getOrientation() const {
     return orientation;
 }
 
-void CVector::transpose(){
+void CVector::transpose()
+{
     orientation == Horizontal ? orientation = Vertical : orientation = Horizontal;
 }
 
-
+CVector CVector::transposed() const
+{
+    CVector r(*this);
+    r.orientation = orientation == Horizontal ? Vertical : Horizontal;
+    return r;
+}
