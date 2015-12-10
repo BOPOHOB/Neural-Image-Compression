@@ -16,8 +16,9 @@ class CArray : public std::vector<double>
 {
 public:
     CArray(int size = 0, double val = 0.0f);
-
     CArray(double* data, int size);
+    CArray(const CArray&);
+    virtual ~CArray() {}
 
     CRealRange estimateRange() const;
     CIndexRange estimateRangeIndex() const;

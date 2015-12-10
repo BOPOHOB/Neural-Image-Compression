@@ -61,8 +61,8 @@ MainWidget::MainWidget(QWidget *parent)
 
     clipWidthSpin->setValue(256);
     clipHeightSpin->setValue(256);
-    frameWidthSpin->setValue(16);
-    frameHeightSpin->setValue(16);
+    frameWidthSpin->setValue(64);
+    frameHeightSpin->setValue(64);
     clipWidthSpin->setMinimum(1);
     clipHeightSpin->setMinimum(1);
     frameWidthSpin->setMinimum(1);
@@ -109,17 +109,16 @@ void MainWidget::setScaleResizeMode()
 void MainWidget::setFilename(const QString& f)
 {
     source = QImage(f);
-    for (int i(0); i != source.width(); ++i) {
-        for (int j(0); j != source.height(); ++j) {
-            const int gray(qGray(source.pixel(i, j)));
-            source.setPixel(i, j, qRgb(gray, gray, gray));
-        }
-    }
+    clipWidthSpin->blockSignals(true);
+    clipHeightSpin->blockSignals(true);
     clipWidthSpin->setMaximum(source.width());
     clipHeightSpin->setMaximum(source.height());
     clipWidthSpin->setValue(256);
     clipHeightSpin->setValue(256);
-    update();
+    clipWidthSpin->blockSignals(false);
+    clipHeightSpin->blockSignals(false);
+    qDebug() << "must be";
+    updateFrameSize();
 }
 
 void MainWidget::updateFrameSize()
@@ -140,6 +139,9 @@ void MainWidget::updateClipSize()
 
 void MainWidget::update()
 {
+    if (source.isNull()) {
+        return;
+    }
     QPixmap pix(clipWidthSpin->value(), clipHeightSpin->value());
     QPainter p(&pix);
     if (currentMode == Scale) {
@@ -152,7 +154,7 @@ void MainWidget::update()
     initial->setPixmap(pix, QSize(frameWidthSpin->value(), frameHeightSpin->value()));
     initial->update();
 
-    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList())).recoverToQPixmap());
+    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList()), lSpin->value()).recoverQPixmap());
 }
 
 MainWidget::~MainWidget()

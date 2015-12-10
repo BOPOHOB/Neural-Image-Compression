@@ -4,16 +4,20 @@
 class QPixmap;
 #endif
 class TrainingSet;
+#include "neuralspan.h";
 
 class NeuralCompressor
 {
+    double e(const TrainingSet &wholeX);
 public:
-    NeuralCompressor();
-    NeuralCompressor(const TrainingSet&);
+    NeuralCompressor(const TrainingSet&, const int l);
 
 #ifdef QT_AVAILABLE
-    QPixmap recoverToQPixmap();
+    QPixmap recoverQPixmap();
 #endif
+private:
+    NeuralSpan in;
+    NeuralSpan out;
 };
 
 #endif // NEURALCOMPRESSOR_H

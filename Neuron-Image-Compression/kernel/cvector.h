@@ -7,15 +7,15 @@ class CVector : public CArray
 public:
 
     enum Orientation {
-        Horizontal,//as default
+        Horizontal,//as a default
         Vertical
     };
 
-    CVector(int size, Orientation = Horizontal);
-    ~CVector();
+    CVector(int size = 0, Orientation = Horizontal);
+    CVector(const CVector&);
 
     Orientation getOrientation() const;
-    void setOrientation(Orientation = Horizontal);
+    void setOrientation(const Orientation);
     void transpose();
 
 private:

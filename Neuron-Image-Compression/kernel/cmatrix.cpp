@@ -13,20 +13,20 @@ CMatrix::CMatrix(const CMatrix& m) { this->operator =(m); }
 CMatrix::CMatrix(int w, int h)
 {
     resize(w, h);
-    for (int i(0); i != static_cast<int>(data.size()); ++i) {
-        data[i] = 0;
+    for (int i(0); i != static_cast<int>(memory.size()); ++i) {
+        memory[i] = 0;
     }
 }
 
 void CMatrix::resize(int w, int h) {
     wid = w;
     m.resize(h);
-    data.resize(w * h);
+    memory.resize(w * h);
     repoint();
 }
 
 CMatrix& CMatrix::operator =(const CMatrix& m) {
-    data = m.data;
+    memory = m.memory;
     wid = m.wid;
     this->m.resize(m.m.size());
     repoint();
@@ -36,16 +36,16 @@ CMatrix& CMatrix::operator =(const CMatrix& m) {
 void CMatrix::repoint() {
     int i(0);
     for (Pointers::iterator it(m.begin()); it != m.end(); ++it)
-        *it = data.data() + i++ * wid;
+        *it = memory.data() + i++ * wid;
 }
 
 CMatrix::T CMatrix::minInRow(int r) const {
-    return *std::min_element(data.begin() + wid * r, data.begin() + wid * r + wid);
+    return *std::min_element(memory.begin() + wid * r, memory.begin() + wid * r + wid);
 }
 
 CMatrix::T CMatrix::minInColumn(int c) const {
     T min(std::numeric_limits<T>::infinity());
-    for (const T* it(data.data() + c), *end(data.data() + data.size()); it < end; it += wid) {
+    for (const T* it(memory.data() + c), *end(memory.data() + memory.size()); it < end; it += wid) {
         if (*it < min) {
             min = *it;
         }
@@ -57,11 +57,11 @@ CMatrix::T CMatrix::minInRowExclude(int r, int exclude) const {
     if (height() <= 1)
         return 0;
     if (exclude == 0)
-        return *std::min_element(data.begin() + wid * r + 1, data.begin() + wid * r + wid);
+        return *std::min_element(memory.begin() + wid * r + 1, memory.begin() + wid * r + wid);
     if (exclude == this->height() - 1)
-        return *std::min_element(data.begin() + wid * r, data.begin() + wid * r + wid - 1);
-    return std::min(*std::min_element(data.begin() + wid * r, data.begin() + wid * r + exclude),
-                    *std::min_element(data.begin() + wid * r + exclude + 1, data.begin() + wid * r + wid));
+        return *std::min_element(memory.begin() + wid * r, memory.begin() + wid * r + wid - 1);
+    return std::min(*std::min_element(memory.begin() + wid * r, memory.begin() + wid * r + exclude),
+                    *std::min_element(memory.begin() + wid * r + exclude + 1, memory.begin() + wid * r + wid));
 }
 
 CMatrix::T CMatrix::minInColumnExclude(int c, int exclude) const {
@@ -77,15 +77,15 @@ CMatrix::T CMatrix::minInColumnExclude(int c, int exclude) const {
 }
 
 CMatrix::T CMatrix::max() const {
-    return *std::max_element(data.begin(),data.end());
+    return *std::max_element(memory.begin(),memory.end());
 }
 
 CRealRange CMatrix::estimateRange() const {
-    if (data.empty()) {
+    if (memory.empty()) {
         return CRealRange();
     }
     CRealRange result;
-    for (Data::const_iterator it(data.begin()), end(data.end()); it != end; ++it) {
+    for (Data::const_iterator it(memory.begin()), end(memory.end()); it != end; ++it) {
         result.include(*it);
     }
     return result;
@@ -98,18 +98,18 @@ void CMatrix::plusInRow(int r, const T& val) {
 }
 
 void CMatrix::plusInColumn(int c, const T& val) {
-    for (T* it(data.data() + c), *end(it + data.size()); it != end; it += wid)
+    for (T* it(memory.data() + c), *end(it + memory.size()); it != end; it += wid)
         *it += val;
 }
 
 void CMatrix::excludeRow(int r) {
     if (height() <= r)
         return;
-    for (T* it(m[r]), *dest(it + wid), *end(data.data() + data.size()); dest < end; ++it, ++dest)
+    for (T* it(m[r]), *dest(it + wid), *end(memory.data() + memory.size()); dest < end; ++it, ++dest)
         *it = *dest;
     m.resize(m.size() - 1);
-    data.resize(data.size() - wid);
-    if (data.size())
+    memory.resize(memory.size() - wid);
+    if (memory.size())
         repoint();
     else
         *this = CMatrix();
@@ -123,7 +123,7 @@ void CMatrix::excludeColumn(int c) {
         return;
     }
     int i(0);
-    T* it(m[0] + c), *dest(it), *end(data.data() + data.size());
+    T* it(m[0] + c), *dest(it), *end(memory.data() + memory.size());
     while (dest < end) {
         if (m[i] + c == dest) {
             ++i;
@@ -134,12 +134,12 @@ void CMatrix::excludeColumn(int c) {
         ++dest;
     }
     --wid;
-    data.resize(data.size() - m.size());
+    memory.resize(memory.size() - m.size());
     repoint();
 }
 
 void CMatrix::nanToInf() {
-    for (Data::iterator it(data.begin()); it != data.end(); ++it) {
+    for (Data::iterator it(memory.begin()); it != memory.end(); ++it) {
         if (!(*it == *it)) {
             *it = std::numeric_limits<T>::infinity();
         }
@@ -173,28 +173,70 @@ QDataStream& operator>> (QDataStream& in, std::vector<CMatrix::T>& m) {
 
 }
 
-QDebug operator<< (QDebug out, const CMatrix &obj) {
-    QString matrix("CMatrix {\n");
-    for (int i(0); i != obj.height(); ++i) {
-        for (int j(0); j != obj.width(); ++j) {
-            matrix += '\t';
-            matrix += QString::number(obj.m[i][j]);
-        }
-        matrix += '\n';
+namespace {
+
+void writeRow(QDebug out, const double* m, const int width)
+{
+    switch (width) {
+    case 1:
+        out << '\t' << m[0] << '\n';
+        return;
+    case 2:
+        out << '\t' << m[0] << ',' << m[1] << '\n';
+        return;
+    case 3:
+        out << '\t' << m[0] << ',' << m[1] << ',' << m[2] << '\n';
+        return;
+    case 4:
+        out << '\t' << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << '\n';
+        return;
+    case 5:
+        out << '\t' << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << ',' << m[4] << '\n';
+        return;
+    case 6:
+        out << '\t' << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << ',' << m[4] << ',' << m[5] << '\n';
+        return;
+    default:
+        out << '\t' << m[0] << ',' << m[1] << ',' << m[2] << "..." << m[width - 3] << ',' << m[width - 2] << ',' << m[width - 1] << '\n';
+        return;
     }
-    matrix += '}';
-    out << matrix;
+}
+
+}
+
+QDebug operator<< (QDebug out, const CMatrix &obj) {
+    if (obj.height() == 0 || obj.width() == 0) {
+        out << "CMatrix(" << obj.height() << ',' << obj.width() << ") { }\n";
+        return out;
+    }
+    if (obj.height() <= 10) {
+        out << "CMatrix(" << obj.height() << ',' << obj.width() << ") {\n";
+        for (int i(0); i != obj.height(); ++i) {
+            writeRow(out, obj[i], obj.width());
+        }
+        out << "}\n";
+    } else {
+        out << "CMatrix(" << obj.height() << ',' << obj.width() << ") {\n";
+        for (int i(0); i != 5; ++i) {
+            writeRow(out, obj[i], obj.width());
+        }
+        out << "\t\t...\n";
+        for (int i(obj.height() - 5); i != obj.height(); ++i) {
+            writeRow(out, obj[i], obj.width());
+        }
+        out << "}\n";
+    }
     return out;
 }
 
 QDataStream& operator<< (QDataStream& out, const CMatrix& m) {
-    return out << m.data << m.wid;
+    return out << m.memory << m.wid;
 }
 
 QDataStream& operator>> (QDataStream& in, CMatrix& m) {
-    in >> m.data >> m.wid;
+    in >> m.memory >> m.wid;
     if (m.wid) {
-        m.m.resize(m.data.size() / m.wid);
+        m.m.resize(m.memory.size() / m.wid);
         m.repoint();
     }
     return in;
@@ -224,12 +266,12 @@ double CMatrix::det(){
 
 CMatrix CMatrix::operator*(const CMatrix& matrix2) const {
     if (width() != matrix2.height()) {
-        return CMatrix();
+        throw std::exception();
     }
-    CMatrix result(matrix2.width(),height());
-    for(int i(0); i < height(); i++){
-        for(int j(0); j < matrix2.width(); j++){
-            for(int k(0); k < width(); k++){
+    CMatrix result(matrix2.width(), height());
+    for (int i(0); i < result.height(); i++){
+        for (int j(0); j < result.width(); j++){
+            for (int k(0); k < width(); k++){
                 result[i][j] += m[i][k] * matrix2[k][j];
             }
         }
@@ -237,19 +279,19 @@ CMatrix CMatrix::operator*(const CMatrix& matrix2) const {
     return result;
 }
 
-CMatrix CMatrix::operator* (const CVector& vector) const {
+CVector CMatrix::operator* (const CVector& vector) const {
     if (static_cast<int>(vector.size()) != width()) {
         throw std::exception();
     }
     if (vector.getOrientation() != CVector::Vertical){
         throw std::exception();
     }
-    CMatrix result(1,height());
-    for(int i(0); i < height(); i++){
-        for(int j(0); j < width(); j++){
-            result[i][0] += m[i][j] * vector[j];
-            }
+    CVector result(height(), CVector::Horizontal);
+    for (int i(0); i < height(); i++){
+        for (int j(0); j < width(); j++){
+            result[i] += m[i][j] * vector[j];
         }
+    }
     return result;
 }
 
@@ -269,7 +311,7 @@ CMatrix operator* (const CVector& vector, const CMatrix& matrix){
     return result;
 }
 
-CMatrix CMatrix::invers() const {
+CMatrix CMatrix::inversed() const {
     if (height() != width()){
         throw std::exception();
     }
@@ -312,7 +354,7 @@ CMatrix CMatrix::invers() const {
     return matrixE;
 }
 
-CMatrix CMatrix::dotTranspose() const{
+CMatrix CMatrix::dotTransposed() const{
     CMatrix tempM(this->height(),this->height());
     for(int i(0); i < height(); i++){
         for(int j(0); j < height(); j++){
@@ -329,7 +371,7 @@ CMatrix CMatrix::dotTranspose() const{
     return tempM;
 }
 
-CMatrix CMatrix::transpose() const{
+CMatrix CMatrix::transposed() const{
     CMatrix result(height(),width());
     for (int i(0); i < width(); i++){
         for (int j(0); j < height(); j++){
@@ -339,12 +381,12 @@ CMatrix CMatrix::transpose() const{
      return result;
 }
 
-CMatrix CMatrix::pseudoInvers() const{
+CMatrix CMatrix::pseudoInversed() const{
     CMatrix result(height(),width());
     result = *this;
     CMatrix tempM(height(), height());
-    tempM = this->dotTranspose();
-    tempM = tempM.invers();
+    tempM = dotTransposed();
+    tempM = tempM.inversed();
     result = tempM * result;
     return result;
 }

@@ -7,7 +7,7 @@
 class NeuralSpan : public CMatrix
 {
 public:
-    NeuralSpan();
+    NeuralSpan(int n, int l);
 };
 
 #endif // NEURALSPAN_H

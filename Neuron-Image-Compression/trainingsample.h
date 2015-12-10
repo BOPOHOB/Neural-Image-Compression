@@ -2,15 +2,16 @@
 #define TRAININGSAMPLE_H
 
 #include <vector>
+#include "kernel/cvector.h"
 
 #ifdef QT_AVAILABLE
 class QImage;
 #endif
 
-class TrainingSample : std::vector<char>
+class TrainingSample : public CVector
 {
 public:
-    TrainingSample();
+
 #ifdef QT_AVAILABLE
     TrainingSample(const QImage&);
 #endif

@@ -20,12 +20,12 @@ private:
     typedef std::vector<T*> Pointers;
 
 
-    Data data;
+    Data memory;
     Pointers m;
     int wid;
     void repoint();
 
-    CMatrix dotTranspose() const;
+    CMatrix dotTransposed() const;
 public:
     CMatrix();
     CMatrix(int w, int h);
@@ -50,18 +50,20 @@ public:
     void excludeColumn(int c);
 
 
-    CMatrix pseudoInvers() const;
-    CMatrix invers() const;
-    CMatrix transpose() const;
+    CMatrix pseudoInversed() const;
+    CMatrix inversed() const;
+    CMatrix transposed() const;
     CMatrix operator* (const CMatrix&) const;
-    CMatrix operator* (const CVector& vector) const;
+    CVector operator* (const CVector&) const;
     T det();
     void nanToInf();
 
     int width() const { return wid; }
     int height() const { return static_cast<int>(m.size()); }
-    int size() const { return static_cast<int>(data.size()); }
-    bool empty() const { return data.empty(); }
+    int size() const { return static_cast<int>(memory.size()); }
+    bool empty() const { return memory.empty(); }
+    T* data() { return memory.data(); }
+    const T* data() const { return memory.data(); }
 
 #ifdef QT_VERSION
     friend QDebug operator<< (QDebug out, const CMatrix &obj);

@@ -4,16 +4,17 @@
 
 
 CVector::CVector(int size, Orientation theOrientation)
-  : CArray(size),
-    orientation(theOrientation){
+  : CArray(size)
+  , orientation(theOrientation){ }
+
+CVector::CVector(const CVector& enother)
+    : CArray(enother)
+    , orientation(enother.orientation)
+{
 
 }
 
-CVector::~CVector(){
-
-}
-
-void CVector::setOrientation(Orientation theOrientation){
+void CVector::setOrientation(const Orientation theOrientation){
     orientation = theOrientation;
 }
 

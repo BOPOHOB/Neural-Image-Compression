@@ -23,7 +23,7 @@ FileNameEdit::FileNameEdit(QWidget* parent)
     , __onClick([](FileNameEdit* parent)->QString{ return QFileDialog::getOpenFileName(parent); })
 {
     __pb->setIcon(QIcon(":/img/open.png"));
-    __pb->setToolTip("Выбирай файл!");
+    __pb->setToolTip(tr("Chose file"));
     __pb->setFlat(true);
     __pb->setFixedHeight(this->height());
     __pb->setFixedSize(19,19);
@@ -40,7 +40,7 @@ FileNameEdit::FileNameEdit(QWidget* parent)
     model->setRootPath("");
     this->completer()->setMaxVisibleItems(10);
     this->completer()->setModel(model);
-    __warning->setToolTip("Файл ещё не выбран! Выбирай файл!");
+    __warning->setToolTip(tr("file still not selected"));
     this->connect(this, SIGNAL(textChanged(QString)), this, SLOT(valueTest()));
 }
 
@@ -56,7 +56,10 @@ void FileNameEdit::valueTest() {
     QFileInfo checkFile(this->text());
     // check if file exists and if yes: Is it really a file and no directory?
     if (checkFile.exists() && checkFile.isFile()) {
-        emit fileNameChanged(this->text());
+        if (__value != this->text()) {
+            __value = this->text();
+            emit fileNameChanged(this->text());
+        }
         if (!__warning->isHidden()) {
             __warning->hide();
             QMargins m(this->textMargins());

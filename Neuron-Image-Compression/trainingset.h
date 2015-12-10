@@ -8,7 +8,7 @@
 class QImage;
 #endif
 
-class TrainingSet : std::vector<TrainingSample>
+class TrainingSet : public std::vector<TrainingSample>
 {
 public:
     TrainingSet();

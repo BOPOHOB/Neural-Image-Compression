@@ -1,20 +1,16 @@
 #include "trainingsample.h"
 #ifdef QT_AVAILABLE
 #include <QImage>
+#include <QRgb>
 #endif
-
-TrainingSample::TrainingSample()
-{
-
-}
 
 #ifdef QT_AVAILABLE
 TrainingSample::TrainingSample(const QImage& img)
-    : std::vector<char>(img.width() * img.height())
+    : CVector(img.width() * img.height(), CVector::Vertical)
 {
     for (int i(0); i != img.height(); ++i) {
         for (int j(0); j != img.width(); ++j) {
-            this->at(i * img.height() + j) = img.pixel(i, j);
+            this->at(i * img.width() + j) = qGray(img.pixel(j, i));
         }
     }
 }

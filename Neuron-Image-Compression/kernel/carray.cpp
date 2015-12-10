@@ -13,11 +13,16 @@ CArray::CArray(int size, double val)
 
 
 CArray::CArray(double* data, int size)
-  : std::vector<double>(size) {
+  : std::vector<double>(size)
+{
     memcpy(this->data(), data, size * sizeof(double));
 }
 
-CIndexRange CArray::estimateRangeIndex() const {
+CArray::CArray(const CArray& enother)
+    : std::vector<double>(enother) { }
+
+CIndexRange CArray::estimateRangeIndex() const
+{
     CIndexRange domain(0);
     CRealRange range(std::numeric_limits<double>::infinity(),
                     -std::numeric_limits<double>::infinity());
@@ -36,7 +41,8 @@ CIndexRange CArray::estimateRangeIndex() const {
     return domain;
 }
 
-CRealRange CArray::estimateRange() const {
+CRealRange CArray::estimateRange() const
+{
     CRealRange domain(std::numeric_limits<double>::infinity(),
                     -std::numeric_limits<double>::infinity());
     for(const_iterator it(this->begin()), end(this->end()); it != end; ++it) {
@@ -47,7 +53,8 @@ CRealRange CArray::estimateRange() const {
     return domain;
 }
 
-void CArray::grade(int count) {
+void CArray::grade(int count)
+{
     CRealRange range(estimateRange());
     double h(range.range());
     double step = h / count;
@@ -91,16 +98,16 @@ QDebug operator<<(QDebug out, const CArray& m)
         out << "CArray( 2 ) {" << m[0] << ',' << m[1] << "}";
         return out;
     case 3:
-        out << "CArray( 2 ) {" << m[0] << ',' << m[1] << ',' << m[2] << "}";
+        out << "CArray( 3 ) {" << m[0] << ',' << m[1] << ',' << m[2] << "}";
         return out;
     case 4:
-        out << "CArray( 2 ) {" << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << "}";
+        out << "CArray( 4 ) {" << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << "}";
         return out;
     case 5:
-        out << "CArray( 2 ) {" << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << ',' << m[4] << "}";
+        out << "CArray( 5 ) {" << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << ',' << m[4] << "}";
         return out;
     case 6:
-        out << "CArray( 2 ) {" << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << ',' << m[4] << ',' << m[5] << "}";
+        out << "CArray( 6 ) {" << m[0] << ',' << m[1] << ',' << m[2] << ',' << m[3] << ',' << m[4] << ',' << m[5] << "}";
         return out;
     default:
         out << "CArray(" << m.size() << ") {" << m[0] << ',' << m[1] << ',' << m[2]
@@ -109,7 +116,8 @@ QDebug operator<<(QDebug out, const CArray& m)
     }
 }
 
-QDataStream& operator<< (QDataStream& out, const CArray& m) {
+QDataStream& operator<< (QDataStream& out, const CArray& m)
+{
     out << static_cast<const quint32>(m.size());
     const int writed(out.writeRawData(static_cast<const char*>(static_cast<const void*>(m.data())), static_cast<int>(m.size() * sizeof(CArray::value_type))));
     if (writed != static_cast<int>(m.size() * sizeof(CArray::value_type))) {
@@ -118,7 +126,8 @@ QDataStream& operator<< (QDataStream& out, const CArray& m) {
     return out;
 }
 
-QDataStream& operator>> (QDataStream& in, CArray& m) {
+QDataStream& operator>> (QDataStream& in, CArray& m)
+{
     quint32 size;
     in >> size;
     m.resize(size);
