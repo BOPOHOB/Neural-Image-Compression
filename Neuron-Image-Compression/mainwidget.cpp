@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QPainter>
 #include <QRadioButton>
+#include <QCheckBox>
 #ifdef Q_OS_WIN
 #include <QtWinExtras>
 #endif
@@ -67,7 +68,7 @@ MainWidget::MainWidget(QWidget *parent)
     clipHeightSpin->setMinimum(1);
     frameWidthSpin->setMinimum(1);
     frameHeightSpin->setMinimum(1);
-    lSpin->setValue(64);
+    lSpin->setValue(4);
     params->addRow(tr("Clip width"), clipWidthSpin);
     params->addRow(tr("Clip height"), clipHeightSpin);
     params->addRow(tr("Resize mode"), ([this]()->QWidget*{
@@ -85,6 +86,12 @@ MainWidget::MainWidget(QWidget *parent)
     params->addRow(tr("Frame grid columns count"), frameWidthSpin);
     params->addRow(tr("Frame grid rows count"), frameHeightSpin);
     params->addRow(tr("L"), lSpin);
+    params->addRow(tr("Show greed"), ([this]()->QWidget*{
+        QCheckBox* const b(new QCheckBox(this));
+        b->setChecked(true);
+        connect(b, SIGNAL(toggled(bool)), this->initial, SLOT(enableGreed(bool)));
+        return b;
+    })());
 
     this->connect(input, SIGNAL(fileNameChanged(QString)), SLOT(setFilename(QString)));
     this->connect(clipWidthSpin, SIGNAL(valueChanged(int)), SLOT(updateClipSize()));
@@ -117,7 +124,6 @@ void MainWidget::setFilename(const QString& f)
     clipHeightSpin->setValue(256);
     clipWidthSpin->blockSignals(false);
     clipHeightSpin->blockSignals(false);
-    qDebug() << "must be";
     updateFrameSize();
 }
 
@@ -156,6 +162,7 @@ void MainWidget::update()
 
     const QSize frameSize(initial->getFrameList().front().size());
     result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList()), lSpin->value(), frameWidthSpin->value(), CSize(frameSize.width(), frameSize.height())).recoverQPixmap());
+    result->setFixedSize(pix.size());
 }
 
 MainWidget::~MainWidget()

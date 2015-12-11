@@ -19,9 +19,13 @@ public:
 
     static QSize frameSize(const QSize& imgSize, const QSize& gridSize);
 
+public slots:
+    void enableGreed(const bool);
+
 private:
     QSize gridSize;
     QList<QImage> frameList;
+    bool isGreed;
 };
 
 #endif // FRAMEGRIDDISPLAY_H

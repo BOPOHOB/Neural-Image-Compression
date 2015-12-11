@@ -11,7 +11,7 @@ public:
         Vertical
     };
 
-    CVector(int size = 0, Orientation = Horizontal);
+    CVector(int size = 0, double initialValue = 0.0, Orientation = Horizontal);
     CVector(const CVector&);
 
     Orientation getOrientation() const;

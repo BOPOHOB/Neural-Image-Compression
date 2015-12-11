@@ -286,7 +286,7 @@ CVector CMatrix::operator* (const CVector& vector) const {
     if (vector.getOrientation() != CVector::Vertical){
         throw std::exception();
     }
-    CVector result(height(), CVector::Horizontal);
+    CVector result(height(), 0.0, CVector::Vertical);
     for (int i(0); i < height(); i++){
         for (int j(0); j < width(); j++){
             result[i] += m[i][j] * vector[j];
@@ -297,14 +297,12 @@ CVector CMatrix::operator* (const CVector& vector) const {
 
 CVector operator* (const CVector& vector, const CMatrix& matrix){
     if (static_cast<int>(vector.size()) != matrix.height()) {
-        qDebug() << vector.size() << "!=" <<  matrix.height();
         throw std::exception();
     }
-    if (vector.getOrientation() != CVector::Vertical){
-        qDebug() << vector << "is horisontal" <<  matrix.height();
+    if (vector.getOrientation() != CVector::Horizontal) {
         throw std::exception();
     }
-    CVector result(matrix.width());
+    CVector result(matrix.width(), 0.0, CVector::Horizontal);
     for(int i(0); i < matrix.width(); i++){
         for(int j(0); j < matrix.height(); j++){
             result[i] += matrix[j][i] * vector[j];

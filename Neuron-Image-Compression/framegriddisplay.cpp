@@ -7,7 +7,7 @@
 #include <QDebug>
 #include "pixmapwidget.h"
 
-FrameGridDisplay::FrameGridDisplay(QWidget *parent) : QWidget(parent)
+FrameGridDisplay::FrameGridDisplay(QWidget *parent) : QWidget(parent), isGreed(true)
 {
 }
 
@@ -25,8 +25,8 @@ void FrameGridDisplay::paintEvent(QPaintEvent *)
     const QSize frameSize(frameList.first().size());
     for (int i(0); i != gridSize.width(); ++i) {
         for (int j(0); j != gridSize.height(); ++j) {
-            p.drawImage((1 + frameSize.width()) * i,
-                        (1 + frameSize.height()) * j,
+            p.drawImage((isGreed + frameSize.width()) * i,
+                        (isGreed + frameSize.height()) * j,
                         frameList.at(i * gridSize.height() + j));
         }
     }
@@ -60,4 +60,10 @@ void FrameGridDisplay::setPixmap(const QPixmap& img, const QSize& gridSize)
 const QList<QImage>& FrameGridDisplay::getFrameList() const
 {
     return frameList;
+}
+
+void FrameGridDisplay::enableGreed(const bool v)
+{
+    isGreed = v;
+    this->update();
 }

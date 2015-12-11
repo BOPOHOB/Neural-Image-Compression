@@ -5,7 +5,7 @@ class QPixmap;
 #endif
 class TrainingSet;
 #include "kernel/csize.h"
-#include "neuralspan.h";
+#include "neuralspan.h"
 
 class NeuralCompressor
 {
@@ -14,7 +14,7 @@ public:
     NeuralCompressor(const TrainingSet&, const int l, const int rowFramesCount, const CSize frameSize);
 
 #ifdef QT_AVAILABLE
-    QPixmap recoverQPixmap();
+    QPixmap recoverQPixmap() const;
 #endif
 private:
     NeuralSpan in;

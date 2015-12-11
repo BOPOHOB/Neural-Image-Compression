@@ -3,8 +3,8 @@
 #include <iostream>
 
 
-CVector::CVector(int size, Orientation theOrientation)
-  : CArray(size)
+CVector::CVector(int size, double initialValue, Orientation theOrientation)
+  : CArray(size, initialValue)
   , orientation(theOrientation) { }
 
 CVector::CVector(const CVector& enother)
