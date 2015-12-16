@@ -1,6 +1,7 @@
 #ifndef CSIZE_H
 #define CSIZE_H
 
+class QSize;
 
 class CSize
 {
@@ -8,6 +9,7 @@ public:
     CSize(const CSize&);
     CSize(int width, int height);
     CSize();
+    CSize(const QSize&);
     ~CSize();
 
     void setWidth(const int width);
@@ -18,5 +20,11 @@ private:
     int w;
     int h;
 };
+
+#include <QDebug>
+inline QDebug operator<<(QDebug out, const CSize& s) {
+    out << "CSize{" << s.width() << ',' << s.height() << '}';
+    return out;
+}
 
 #endif // CSIZE_H

@@ -19,6 +19,8 @@ public:
     void transpose();
     CVector transposed() const;
 
+    CVector& operator+=(const value_type& v);
+
 private:
     Orientation orientation;
 

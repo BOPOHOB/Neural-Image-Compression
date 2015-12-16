@@ -56,8 +56,8 @@ void FileNameEdit::valueTest() {
     QFileInfo checkFile(this->text());
     // check if file exists and if yes: Is it really a file and no directory?
     if (checkFile.exists() && checkFile.isFile()) {
-        if (__value != this->text()) {
-            __value = this->text();
+        if (__val != this->text()) {
+            __val = this->text();
             emit fileNameChanged(this->text());
         }
         if (!__warning->isHidden()) {

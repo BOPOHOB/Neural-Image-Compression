@@ -9,21 +9,22 @@ class TrainingSet;
 
 class NeuralCompressor
 {
-    double e(const TrainingSet &wholeX);
 public:
-    NeuralCompressor(const TrainingSet&, const int l, const int rowFramesCount, const CSize frameSize);
+    NeuralCompressor(const TrainingSet&, const int l, const CSize frameSize,  const CSize imageSize);
 
 #ifdef QT_AVAILABLE
     QPixmap recoverQPixmap() const;
 #endif
-private:
-    NeuralSpan in;
-    NeuralSpan out;
 
-    typedef std::vector<CVector> CompressedData;
-    CompressedData data;
-    int width;
-    CSize frame;
+    static CMatrix::T ETA;
+private:
+    NeuralSpan weights;
+    typedef std::multimap<int, int> Conformity;
+    typedef std::pair<int, int> ConformityItem;
+    Conformity conformity;
+
+    const CSize image;
+    const CSize frame;
 };
 
 #endif // NEURALCOMPRESSOR_H

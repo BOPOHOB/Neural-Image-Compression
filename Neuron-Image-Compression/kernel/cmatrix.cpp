@@ -13,15 +13,12 @@ CMatrix::CMatrix(const CMatrix& m) { this->operator =(m); }
 CMatrix::CMatrix(int w, int h)
 {
     resize(w, h);
-    for (int i(0); i != static_cast<int>(memory.size()); ++i) {
-        memory[i] = 0;
-    }
 }
 
 void CMatrix::resize(int w, int h) {
     wid = w;
     m.resize(h);
-    memory.resize(w * h);
+    memory.resize(w * h, 0.0);
     repoint();
 }
 

@@ -15,8 +15,8 @@ class QDebug;
 class CArray : public std::vector<double>
 {
 public:
-    CArray(int size = 0, double val = 0.0f);
-    CArray(double* data, int size);
+    CArray(int size = 0, const value_type& val = 0.0f);
+    CArray(value_type* data, int size);
     CArray(const CArray&);
     virtual ~CArray() {}
 
@@ -25,6 +25,7 @@ public:
 
     /// split all values to bins with equal range. Move values from each bin to value which is middle of it's bin
     void grade(int bonsCount);
+    void fill(const value_type& val, int size = -1);
 
     bool operator==(const CArray&);
 };

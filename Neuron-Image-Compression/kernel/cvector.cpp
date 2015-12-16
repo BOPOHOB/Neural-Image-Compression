@@ -27,6 +27,14 @@ void CVector::transpose()
     orientation == Horizontal ? orientation = Vertical : orientation = Horizontal;
 }
 
+CVector& CVector::operator+=(const value_type& v)
+{
+    for (iterator i(begin()), end(end()); i != end; ++i) {
+        *i += v;
+    }
+    return *this;
+}
+
 CVector CVector::transposed() const
 {
     CVector r(*this);

@@ -8,11 +8,11 @@
 #include <QDebug>
 #endif // NOT_QT_AVAILABLE
 
-CArray::CArray(int size, double val)
+CArray::CArray(int size, const value_type &val)
   : std::vector<double>(size, val) { }
 
 
-CArray::CArray(double* data, int size)
+CArray::CArray(value_type *data, int size)
   : std::vector<double>(size)
 {
     memcpy(this->data(), data, size * sizeof(double));
@@ -51,6 +51,14 @@ CRealRange CArray::estimateRange() const
         }
     }
     return domain;
+}
+
+void CArray::fill(const value_type& val, int size)
+{
+    if (size != -1) {
+        this->resize(size);
+    }
+    std::fill(this->begin(), this->end(), val);
 }
 
 void CArray::grade(int count)

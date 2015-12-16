@@ -1,8 +1,10 @@
 #include "csize.h"
+#include <QSize>
 
 CSize::CSize() {}
 CSize::CSize(const CSize& s) : w(s.w), h(s.h) {}
 CSize::CSize(int width, int height) : w(width), h(height) {}
+CSize::CSize(const QSize& s) : w(s.width()), h(s.height()) {}
 
 CSize::~CSize() { }
 

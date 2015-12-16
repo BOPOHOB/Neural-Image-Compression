@@ -62,13 +62,13 @@ MainWidget::MainWidget(QWidget *parent)
 
     clipWidthSpin->setValue(256);
     clipHeightSpin->setValue(256);
-    frameWidthSpin->setValue(64);
-    frameHeightSpin->setValue(64);
+    frameWidthSpin->setValue(8);
+    frameHeightSpin->setValue(8);
     clipWidthSpin->setMinimum(1);
     clipHeightSpin->setMinimum(1);
     frameWidthSpin->setMinimum(1);
     frameHeightSpin->setMinimum(1);
-    lSpin->setValue(4);
+    lSpin->setValue(64 * 32);
     params->addRow(tr("Clip width"), clipWidthSpin);
     params->addRow(tr("Clip height"), clipHeightSpin);
     params->addRow(tr("Resize mode"), ([this]()->QWidget*{
@@ -129,11 +129,8 @@ void MainWidget::setFilename(const QString& f)
 
 void MainWidget::updateFrameSize()
 {
+    lSpin->setMaximum(frameWidthSpin->value() * frameWidthSpin->value());
     update();
-    if (!initial->getFrameList().empty()) {
-        const QSize s(initial->getFrameList().first().size());
-        lSpin->setMaximum(s.width() * s.height());
-    }
 }
 
 void MainWidget::updateClipSize()
@@ -161,8 +158,10 @@ void MainWidget::update()
     initial->update();
 
     const QSize frameSize(initial->getFrameList().front().size());
-    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList()), lSpin->value(), frameWidthSpin->value(), CSize(frameSize.width(), frameSize.height())).recoverQPixmap());
-    result->setFixedSize(pix.size());
+    const QSize imageSize(frameSize.width() * frameWidthSpin->value(), frameSize.height() * frameHeightSpin->value());
+    result->setPixmap(NeuralCompressor(TrainingSet(initial->getFrameList()), lSpin->value(), frameSize, imageSize).recoverQPixmap());
+    result->setFixedSize(imageSize);
+    result->update();
 }
 
 MainWidget::~MainWidget()
