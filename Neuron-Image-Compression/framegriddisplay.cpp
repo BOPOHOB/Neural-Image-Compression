@@ -1,5 +1,6 @@
 #include "framegriddisplay.h"
 
+#ifdef QT_AVAILABLE
 #include <QGridLayout>
 #include <QPixmap>
 #include <QPainter>
@@ -67,3 +68,4 @@ void FrameGridDisplay::enableGreed(const bool v)
     isGreed = v;
     this->update();
 }
+#endif

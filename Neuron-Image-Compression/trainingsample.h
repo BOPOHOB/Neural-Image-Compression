@@ -11,7 +11,7 @@ class QImage;
 class TrainingSample : public CVector
 {
 public:
-
+    TrainingSample() {}
 #ifdef QT_AVAILABLE
     TrainingSample(const QImage&);
 #endif

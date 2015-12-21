@@ -1,3 +1,4 @@
+#ifdef QT_AVAILABLE
 #include "filenameedit.h"
 
 #include <QPushButton>
@@ -96,3 +97,4 @@ void FileNameEdit::callDialod() {
     this->setText(s);
     valueTest();
 }
+#endif

@@ -21,10 +21,12 @@ private:
     int h;
 };
 
+#ifndef NOT_QT_AVAILABLE
 #include <QDebug>
 inline QDebug operator<<(QDebug out, const CSize& s) {
     out << "CSize{" << s.width() << ',' << s.height() << '}';
     return out;
 }
+#endif
 
 #endif // CSIZE_H

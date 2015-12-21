@@ -1,6 +1,7 @@
 #ifndef FRAMEGRIDDISPLAY_H
 #define FRAMEGRIDDISPLAY_H
 
+#ifdef QT_AVAILABLE
 #include <QWidget>
 
 class QGridLayout;
@@ -28,4 +29,5 @@ private:
     bool isGreed;
 };
 
+#endif
 #endif // FRAMEGRIDDISPLAY_H

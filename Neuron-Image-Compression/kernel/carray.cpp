@@ -67,7 +67,7 @@ void CArray::grade(int count)
     double h(range.range());
     double step = h / count;
     for (CArray::iterator i(this->begin()), end(this->end()); i != end; ++i) {
-        int bin((*i - range.getMin()) / step);
+        int bin(static_cast<int>((*i - range.getMin()) / step));
         if (bin == count) {
             --bin;
         }

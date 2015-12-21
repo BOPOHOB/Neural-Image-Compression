@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <ctime>
+#include <cmath>
 
 namespace {
 double sqr(const double& x) {
@@ -41,16 +42,12 @@ int NeuralSpan::nearest(const CVector& synapse) const
     const double piMin(0.75);
     double minVal(std::numeric_limits<CMatrix::T>::infinity());
     for (int i(0); i != this->height(); ++i) {
-        if (potential[i] > piMin) {
-            const double dest(euclideanNorm(synapse, (*this)[i]));
-            if (dest < minVal) {
-                minRow = i;
-                minVal = dest;
-            }
+        const double dest(euclideanNorm(synapse, (*this)[i]));
+        if (dest < minVal) {
+            minRow = i;
+            minVal = dest;
         }
     }
-    potential += 1.0 / this->height();
-    potential[minRow] -= piMin;
     assert(minRow >= 0);
     return minRow;
 }
@@ -58,4 +55,14 @@ int NeuralSpan::nearest(const CVector& synapse) const
 void NeuralSpan::clearPotential() const
 {
     potential.fill(1.0);
+}
+
+NeuralSpan::Distances NeuralSpan::distance(const CVector &sample)
+{
+    Distances r(this->height());
+    for (int i(0); i != this->height(); ++i) {
+        r[i].first = i;
+        r[i].second = euclideanNorm(sample, (*this)[i]);
+    }
+    return r;
 }

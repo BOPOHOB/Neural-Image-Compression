@@ -6,6 +6,7 @@ class QPixmap;
 class TrainingSet;
 #include "kernel/csize.h"
 #include "neuralspan.h"
+#include <map>
 
 class NeuralCompressor
 {
@@ -17,6 +18,10 @@ public:
 #endif
 
     static CMatrix::T ETA;
+
+#ifdef ENABLE_PNG
+    void saveAs(const char* fName, const char *exampleFName) const;
+#endif
 private:
     NeuralSpan weights;
     typedef std::multimap<int, int> Conformity;

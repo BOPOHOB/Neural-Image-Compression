@@ -1,6 +1,6 @@
 #ifndef FILENAMEEDIT_H
 #define FILENAMEEDIT_H
-
+#ifdef QT_AVAILABLE
 #include <QLineEdit>
 #ifdef _WIN32
 # include <functional>
@@ -38,5 +38,5 @@ private:
     function<QString(FileNameEdit*)> __onClick;
 };
 
-
+#endif
 #endif // FILENAMEEDIT_H

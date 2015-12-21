@@ -1,6 +1,7 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
+#ifdef QT_AVAILABLE
 #include <QWidget>
 #include "pixmapwidget.h"
 
@@ -32,7 +33,6 @@ private slots:
     void updateFrameSize();
 
 private:
-    QProgressBar* const progress;
     FrameGridDisplay* const initial;
     PixmapWidget* const result;
     FileNameEdit* const input;
@@ -46,4 +46,5 @@ private:
     QImage source;
 };
 
+#endif
 #endif // MAINWIDGET_H

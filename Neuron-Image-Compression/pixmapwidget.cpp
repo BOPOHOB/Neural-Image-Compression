@@ -1,3 +1,4 @@
+#ifdef QT_AVAILABLE
 #include "pixmapwidget.h"
 
 #include <QImage>
@@ -32,3 +33,4 @@ void PixmapWidget::paintEvent(QPaintEvent * e) {
 void PixmapWidget::setImage(const QImage& i) { __img.convertFromImage(i); }
 void PixmapWidget::setPixmap(const QPixmap& p) { __img = p; }
 const QPixmap& PixmapWidget::pixmap() const { return __img; }
+#endif

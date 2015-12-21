@@ -1,5 +1,6 @@
 #ifndef ICONWIDGET_H
 #define ICONWIDGET_H
+#ifdef QT_AVAILABLE
 
 #include <QWidget>
 
@@ -20,4 +21,5 @@ private:
     QPixmap __img;
 };
 
+#endif
 #endif // ICONWIDGET_H

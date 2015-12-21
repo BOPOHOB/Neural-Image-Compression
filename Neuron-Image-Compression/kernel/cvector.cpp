@@ -29,7 +29,7 @@ void CVector::transpose()
 
 CVector& CVector::operator+=(const value_type& v)
 {
-    for (iterator i(begin()), end(end()); i != end; ++i) {
+    for (iterator i(begin()), tail(end()); i != tail; ++i) {
         *i += v;
     }
     return *this;

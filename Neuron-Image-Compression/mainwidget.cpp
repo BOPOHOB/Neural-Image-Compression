@@ -1,3 +1,4 @@
+#ifdef QT_AVAILABLE
 #include "mainwidget.h"
 
 #include <QHBoxLayout>
@@ -23,7 +24,6 @@
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
-    , progress(new QProgressBar(this))
     , initial(new FrameGridDisplay(this))
     , result(new PixmapWidget(this))
     , input(new FileNameEdit(this))
@@ -53,7 +53,6 @@ MainWidget::MainWidget(QWidget *parent)
     QHBoxLayout* const l(new QHBoxLayout);
     static_cast<QVBoxLayout*>(this->layout())->addLayout(l);
     static_cast<QVBoxLayout*>(this->layout())->addStretch();
-    this->layout()->addWidget(progress);
 
     l->addWidget(initial);
     QFormLayout* params(new QFormLayout);
@@ -168,3 +167,4 @@ MainWidget::~MainWidget()
 {
 
 }
+#endif

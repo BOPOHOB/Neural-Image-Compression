@@ -44,10 +44,12 @@ public:
     T operator() (const double& op) const { return getMin() + range() * op; }
     double operator[] (const T& op) const { return (op - getMin()) / range(); }
 
-    template <typename D> friend QDataStream& operator >> (QDataStream& in, CRange<D>& i);
     template <typename D> friend std::istream& operator >> (std::istream& in, CRange<D>& i);
-    template <typename D> friend QDataStream& operator << (QDataStream& in, CRange<D>& i);
     template <typename D> friend std::istream& operator << (std::istream& in, CRange<D>& i);
+#ifndef NOT_QT_AVAILABLE
+    template <typename D> friend QDataStream& operator >> (QDataStream& in, CRange<D>& i);
+    template <typename D> friend QDataStream& operator << (QDataStream& in, CRange<D>& i);
+#endif
 };
 
 template <typename T> std::ostream& operator << (std::ostream& out, const CRange<T>& i) {

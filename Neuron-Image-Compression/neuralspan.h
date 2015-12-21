@@ -14,6 +14,10 @@ public:
     static double euclideanNorm(const CVector& synapse, const CMatrix::T* row);
     int nearest(const CVector& synapse) const;
 
+    typedef std::pair<int, CMatrix::T> DistanceItem;
+    typedef std::vector<DistanceItem> Distances;
+    Distances distance(const CVector& sample);
+
     void clearPotential() const;
 };
 
